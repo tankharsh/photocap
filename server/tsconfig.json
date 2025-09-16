@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                  // Generated JS will follow ES2020 standard
+    "module": "commonjs",                // Node.js में CommonJS modules generate करेगा
+    "lib": ["ES2020"],                   // Standard library for ES2020
+    "outDir": "./dist",                  // Transpiled files यहाँ जाएंगे
+    "rootDir": "./src",                  // Source files expected here
+    "strict": true,                      // All strict type-checking options enabled
+    "esModuleInterop": true,             // Default import support for CommonJS
+    "skipLibCheck": true,                // Speeds up build by skipping d.ts checks
+    "forceConsistentCasingInFileNames": true, // Prevents case mismatch issues
+    "resolveJsonModule": true,           // Allows importing JSON files
+    "declaration": true,                 // Generate .d.ts type definition files
+    "declarationMap": true,              // Source maps for .d.ts
+    "sourceMap": true,                   // Generate .map files for debugging
+    "removeComments": true,              // Removes comments in compiled JS
+    "noImplicitAny": true,               // Forces explicit types (better safety)
+    "strictNullChecks": true,            // Null/undefined must be handled explicitly
+    "strictFunctionTypes": true,         // Safer function type checks
+    "noImplicitThis": true,              // Prevents using `this` without type
+    "noImplicitReturns": true,           // Function must return explicitly
+    "noFallthroughCasesInSwitch": true,  // Prevents accidental fallthrough in switch
+    "allowSyntheticDefaultImports": true,// Allows default import from modules with only `export =`
+    "experimentalDecorators": true,      // Enable decorators (@) support
+    "emitDecoratorMetadata": true,       // Extra metadata for decorators (useful in TypeORM, NestJS)
+    "types": ["node"]                    // Node.js typings included
+  },
+  "include": ["src/**/*"],               // All TS files inside src
+  "exclude": ["node_modules", "dist", "**/*.test.ts"] // Ignore tests, build, and node_modules
+}
