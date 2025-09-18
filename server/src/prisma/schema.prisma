@@ -26,3 +26,175 @@ model Admin {
 enum AdminRole {
   SUPER_ADMIN
 }
+
+model StudioUser {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  password          String
+  firstName         String
+  lastName          String
+  phone             String?
+  dateOfBirth       DateTime?
+
+  // Photography Preferences
+  photographyType   String?
+  eventTypes        String[] // Array of event types
+  budget            String?
+  preferredDate     DateTime?
+
+  // Account Settings
+  isActive          Boolean   @default(true)
+  emailVerified     Boolean   @default(false)
+  subscribeNewsletter Boolean @default(false)
+
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  bookings          Booking[]
+  events            Event[]
+  clients           Client[]
+  dataUsage         DataUsage[]
+
+  @@map("studio_users")
+}
+
+model Booking {
+  id              String      @id @default(cuid())
+  userId          String
+  user            StudioUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Booking Details
+  eventType       String
+  eventDate       DateTime
+  eventLocation   String?
+  duration        Int?        // Duration in hours
+  budget          String
+  specialRequests String?
+
+  // Status
+  status          BookingStatus @default(PENDING)
+
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model Event {
+  id              String      @id @default(cuid())
+  userId          String
+  user            StudioUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Event Details
+  title           String
+  description     String?
+  eventType       String
+  eventDate       DateTime
+  eventLocation   String?
+  duration        Int?        // Duration in hours
+  budget          String
+
+  // Client Information
+  clientName      String
+  clientEmail     String
+  clientPhone     String?
+
+  // Status and Progress
+  status          EventStatus @default(PLANNING)
+  progress        Int         @default(0) // Progress percentage (0-100)
+
+  // File Management
+  totalFiles      Int         @default(0)
+  totalSizeGB     Float       @default(0.0)
+
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  client          Client?     @relation(fields: [clientEmail], references: [email])
+
+  @@map("events")
+}
+
+model Client {
+  id              String      @id @default(cuid())
+  userId          String
+  user            StudioUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Client Details
+  name            String
+  email           String      @unique
+  phone           String?
+  address         String?
+  city            String?
+  state           String?
+  zipCode         String?
+
+  // Business Information
+  company         String?
+  website         String?
+
+  // Preferences
+  preferredContactMethod String? // EMAIL, PHONE, SMS
+  notes           String?
+
+  // Statistics
+  totalEvents     Int         @default(0)
+  totalSpent      Float       @default(0.0)
+
+  // Status
+  isActive        Boolean     @default(true)
+
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  events          Event[]
+
+  @@map("clients")
+}
+
+model DataUsage {
+  id              String      @id @default(cuid())
+  userId          String
+  user            StudioUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Usage Details
+  date            DateTime    @default(now())
+  storageUsedGB   Float       @default(0.0)
+  bandwidthUsedGB Float       @default(0.0)
+  filesUploaded   Int         @default(0)
+  filesDownloaded Int         @default(0)
+
+  // Monthly aggregation
+  month           Int         // 1-12
+  year            Int
+
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([userId, month, year])
+  @@map("data_usage")
+}
+
+enum EventStatus {
+  PLANNING
+  IN_PROGRESS
+  EDITING
+  COMPLETED
+  DELIVERED
+  CANCELLED
+}

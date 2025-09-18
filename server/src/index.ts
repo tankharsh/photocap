@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { errorHandler, notFound } from './middleware/auth';
 import adminRoutes from './modules/admin/routes/adminRoutes';
+import studioRoutes from './modules/studio/routes/studioRoutes';
 
 dotenv.config();
 
@@ -13,7 +14,10 @@ const PORT = process.env.PORT || 5000;
 
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3001',
+  origin: [
+    process.env.ADMIN_FRONTEND_URL || 'http://localhost:3001',
+    process.env.STUDIO_FRONTEND_URL || 'http://localhost:3000'
+  ],
   credentials: true
 }));
 
@@ -23,6 +27,7 @@ app.use(cookieParser());
 
 // API routes
 app.use('/api/admin', adminRoutes);
+app.use('/api/studio', studioRoutes);
 
 // Error handling middleware
 app.use(notFound);
